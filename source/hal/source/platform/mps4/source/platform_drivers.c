@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright 2024-2025 Arm Limited and/or its
+ * SPDX-FileCopyrightText: Copyright 2024-2026 Arm Limited and/or its
  * affiliates <open-source-office@arm.com>
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -38,6 +38,9 @@
 #include "uart_stdout.h"    /* stdout over UART. */
 #endif /* !defined(USE_SEMIHOSTING) */
 
+/** Platform name */
+static const char* s_platform_name = DESIGN_NAME;
+
 /**
  * @brief   Checks if the platform is valid by checking
  *          the CPU ID for the FPGA implementation against
@@ -52,8 +55,11 @@ static int verify_platform(void);
  */
 static int platform_hdlcd_init(void);
 
-/** Platform name */
-static const char* s_platform_name = DESIGN_NAME;
+/**
+ * @brief   Creates a new vector table in RW memory region
+ *          since we need to call NVIC_SetVector to modify it
+ */
+static void create_rw_vector_table(void);
 
 int platform_init(void)
 {
@@ -82,6 +88,7 @@ int platform_init(void)
 #endif /* __DCACHE_PRESENT */
 
 #if defined(ARM_NPU)
+    create_rw_vector_table();
 
 #if defined(ETHOS_U_NPU_TIMING_ADAPTER_ENABLED)
     /* If the platform has timing adapter blocks along with Ethos-U core
@@ -309,4 +316,23 @@ static int platform_hdlcd_init(void)
 
     debug("HDLCD device initialised.\n");
     return 0;
+}
+
+#define VTABLE_SIZE 496
+
+/* CMSIS default vector table. Originally in boot ROM (RO mem) */
+extern uint32_t __VECTOR_TABLE[VTABLE_SIZE];
+
+/* Vector table remapping to RW mem required as NVIC_SetVector modifies it */
+static uint32_t vtable_rw[VTABLE_SIZE] __attribute__((used, section(".bss.NoInit.vtable_rw")));
+
+void create_rw_vector_table(void)
+{
+    info("Relocating vector table to %p\n", vtable_rw);
+    memcpy(vtable_rw, __VECTOR_TABLE, sizeof(__VECTOR_TABLE));
+    __disable_irq();
+    SCB->VTOR = (uint32_t)vtable_rw;
+    __DSB();
+    __ISB();
+    __enable_irq();
 }

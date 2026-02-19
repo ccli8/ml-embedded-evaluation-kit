@@ -73,7 +73,7 @@ default_executorch_requirements_path = (
 )
 default_downloads_path = _current_file_dir / "resources_downloaded"
 default_executorch_path = _current_file_dir / "dependencies" / "executorch"
-_default_vela_config_file = _current_file_dir / "scripts" / "vela" / "default_vela.ini"
+default_vela_config_file = _current_file_dir / "scripts" / "vela" / "default_vela.ini"
 
 _vela_config = VelaConfig(
     version=VELA_VERSION,
@@ -118,7 +118,7 @@ def set_up_resources_with_defaults(
     # Fill in default vela_config_file if the caller left it unset.
     if paths_config.vela_config_file is None:
         paths_config = dataclasses.replace(
-            paths_config, vela_config_file=_default_vela_config_file
+            paths_config, vela_config_file=default_vela_config_file
         )
 
     setup_script_hash = get_md5sum_for_file(Path(__file__).resolve())
@@ -292,7 +292,7 @@ if __name__ == "__main__":
         downloads_dir=parsed_args.downloads_dir,
         requirements_files=requirements_files,
         executorch_path=default_executorch_path,
-        vela_config_file=_default_vela_config_file,
+        vela_config_file=default_vela_config_file,
     )
 
     set_up_resources_with_defaults(setup, optimization, paths)

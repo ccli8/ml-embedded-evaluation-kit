@@ -36,7 +36,7 @@ The Arm® *Ethos™-U* NPU requests these Read and Write transactions over the f
 ## Memory available on the target platform
 
 All embedded target platforms supported have platform specific header files that contain memory and other definitions.
-For example, MPS3 target header files can be found under the HAL sources' platform subdirectory and contains the
+For example, MPS3 and MPS4 target header files can be found under the HAL sources' platform subdirectory and contains the
 following definitions:
 
 ```c

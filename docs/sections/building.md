@@ -720,6 +720,19 @@ cmake .. \
     -DTARGET_SUBSYSTEM=sse-320
 ```
 
+To build for Corstone™-320 FPGA (for MPS4 board), an additional flag must be supplied:
+
+```commandline
+cmake .. \
+    -DCMAKE_TOOLCHAIN_FILE=scripts/cmake/toolchains/bare-metal-gcc.cmake \
+    -DTARGET_PLATFORM=mps4 \
+    -DTARGET_SUBSYSTEM=sse-320 \
+    -DFPGA_PLATFORM_SSE_320=ON
+```
+
+The flag `-DFPGA_PLATFORM_SSE_320=ON` is needed for the binaries to work on the MPS4 board, and the binaries produced by this
+build will not work on FVP.  Omit `FPGA_PLATFORM_SSE_320` to produce binaries that can run on Corstone™-320 FVP.
+
 ### Configuring native unit-test build
 
 ```commandline
@@ -768,9 +781,9 @@ Results of the build are placed underÂ `build/bin`Â folder, for example:
 
 ```tree
 bin
- ├── ethos-u-<use_case_name>.axf
- ├── ethos-u-<use_case_name>.htm
- ├── ethos-u-<use_case_name>.map
+ ├── mlek_<use_case_name>.axf
+ ├── mlek_<use_case_name>.htm
+ ├── mlek_<use_case_name>.map
  └── sectors
         ├── images.txt
         └── <use_case>
@@ -780,12 +793,12 @@ bin
 
 Where for each implemented use-case under the `source/use-case` directory, the following build artifacts are created:
 
-- `ethos-u-<use-case name>.axf`: The built application binary for an ML use-case.
+- `mlek_<use-case name>.axf`: The built application binary for an ML use-case.
 
-- `ethos-u-<use-case name>.map`: Information from building the application. For example: Libraries used, what was
+- `mlek_<use-case name>.map`: Information from building the application. For example: Libraries used, what was
   optimized, and location of objects.
 
-- `ethos-u-<use-case name>.htm`: Human readable file containing the call graph of application functions.
+- `mlek_<use-case name>.htm`: Human readable file containing the call graph of application functions.
 
 - `sectors/<use-case>`: Folder containing the built application. Split into files for loading into different FPGA
   memory regions.

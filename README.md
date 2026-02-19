@@ -33,7 +33,7 @@ This repository is for building and deploying Machine Learning (ML) applications
 Ethos™-U NPU.
 To run evaluations using this software, we suggest using:
 
-- [MPS3 board](https://developer.arm.com/tools-and-software/development-boards/fpga-prototyping-boards/mps3) with
+- [MPS3 board](https://www.arm.com/products/development-tools/development-boards/mps3) with
   [Arm® Corstone-300](https://developer.arm.com/Processors/Corstone-300) or [Arm® Corstone-310](https://developer.arm.com/Processors/Corstone-310) implementations.
   - Arm® Corstone™-300 runs a combination of
   the [Arm® Cortex™-M55 processor](https://www.arm.com/products/silicon-ip-cpu/cortex-m/cortex-m55) and the
@@ -41,6 +41,12 @@ To run evaluations using this software, we suggest using:
   - Arm® Corstone™-310 runs a combination of
       the [Arm® Cortex™-M85 processor](https://www.arm.com/products/silicon-ip-cpu/cortex-m/cortex-m85) and the
       [Arm® Ethos™-U55 NPU](https://www.arm.com/products/silicon-ip-cpu/ethos/ethos-u55).
+
+- [MPS4 board](https://www.arm.com/products/development-tools/development-boards/mps4) with
+  [Arm® Corstone-320](https://developer.arm.com/Processors/Corstone-320) implementation.
+  - Arm® Corstone™-320 runs a combination of
+      the [Arm® Cortex™-M85 processor](https://www.arm.com/products/silicon-ip-cpu/cortex-m/cortex-m85) and the
+      [Arm® Ethos™-U85 NPU](https://www.arm.com/products/silicon-ip-cpu/ethos/ethos-u85).
 
 - [Arm® Corstone™ Fixed Virtual Platform (FVP)](https://developer.arm.com/tools-and-software/open-source-software/arm-platforms-software/arm-ecosystem-fvps)
   - [Arm® Corstone™-300 MPS3 based Fixed Virtual Platform (FVP)](https://developer.arm.com/tools-and-software/open-source-software/arm-platforms-software/arm-ecosystem-fvps) offers a choice of the [Arm® Ethos™-U55 NPU](https://www.arm.com/products/silicon-ip-cpu/ethos/ethos-u55)
@@ -54,10 +60,10 @@ To run evaluations using this software, we suggest using:
   - [Arm® Corstone™-320 MPS3 based Fixed Virtual Platform (FVP)](https://developer.arm.com/tools-and-software/open-source-software/arm-platforms-software/arm-ecosystem-fvps) offers the [Arm® Ethos™-U85 NPU](https://www.arm.com/products/silicon-ip-cpu/ethos/ethos-u85) software fast model in combination with
   the [Arm® Cortex™-M85 processor](https://www.arm.com/products/silicon-ip-cpu/cortex-m/cortex-m85)
 
-> Arm® Corstone™-300 and Corstone™-310 design implementations are publicly available on [Download FPGA Images](https://developer.arm.com/tools-and-software/development-boards/fpga-prototyping-boards/download-fpga-images) page,
-> or as a [Fixed Virtual Platform of the MPS3 development board](https://developer.arm.com/tools-and-software/open-source-software/arm-platforms-software/arm-ecosystem-fvps).
+> Arm® Corstone™-300, Corstone™-310 and Corstone™-320 design implementations are publicly available on [Download FPGA Images](https://developer.arm.com/tools-and-software/development-boards/fpga-prototyping-boards/download-fpga-images) page,
+> or as a [Fixed Virtual Platform](https://developer.arm.com/tools-and-software/open-source-software/arm-platforms-software/arm-ecosystem-fvps).
 >
-> Arm® Corstone™-315 and Corstone™-320 design implementations are publicly available as a [Fixed Virtual Platform of the MPS4 development board](https://developer.arm.com/tools-and-software/open-source-software/arm-platforms-software/arm-ecosystem-fvps).
+> Arm® Corstone™-315 design implementations are publicly available as a [Fixed Virtual Platform](https://developer.arm.com/tools-and-software/open-source-software/arm-platforms-software/arm-ecosystem-fvps).
 
 ## Quick Start
 
@@ -105,6 +111,13 @@ To run ML applications on the Cortex-M and Ethos-U NPU:
     python3 ./build_default.py --ml-framework executorch
     ```
 
+    ##### Build for Arm® Corstone™-320 MPS4 FPGA board
+    For Arm® Corstone™-320 specifically, the binaries needed for Fixed Virtual Platform and FPGA are different.
+    Supply the `--fpga` flag while also specifying the `ethos-u85-1024` NPU configuration:
+    ```commandline
+    python3.10 ./build_default.py --npu-config-name ethos-u85-1024 --fpga
+    ```
+
 5. Change directory to the generated cmake build folder which contains the `.axf` file output in the `bin`
    subdirectory. Launch the application by passing the `.axf` to the FVP you downloaded when installing the prerequisites.
    Alternatively, from the root directory add `<cmake-build-your_config>` to the path to the axf and use one of the
@@ -112,10 +125,10 @@ To run ML applications on the Cortex-M and Ethos-U NPU:
 
     ```commandline
     # From auto-generated (or custom) build directory:
-    <path_to_FVP>/FVP_Corstone_SSE-300_Ethos-U55 -a ./bin/ethos-u-kws.axf
+    <path_to_FVP>/FVP_Corstone_SSE-300_Ethos-U55 -a ./bin/mlek_kws.axf
 
     # From root directory:
-    <path_to_FVP>/FVP_Corstone_SSE-300_Ethos-U55 -a <cmake-build-your_config>/bin/ethos-u-kws.axf
+    <path_to_FVP>/FVP_Corstone_SSE-300_Ethos-U55 -a <cmake-build-your_config>/bin/mlek_kws.axf
     ```
 
 6. A telnet window is launched through which you can interact with the application and obtain performance figures.
