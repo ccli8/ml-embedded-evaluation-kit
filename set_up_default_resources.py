@@ -68,6 +68,9 @@ default_npu_configs = NpuConfigs.create(
 _current_file_dir = Path(__file__).parent.resolve()
 default_use_case_resources_path = _current_file_dir / "resources" / "use_case_resources.json"
 default_requirements_path = _current_file_dir / "scripts" / "py" / "requirements.txt"
+default_executorch_requirements_path = (
+    _current_file_dir / "scripts" / "py" / "requirements-executorch.txt"
+)
 default_downloads_path = _current_file_dir / "resources_downloaded"
 default_executorch_path = _current_file_dir / "dependencies" / "executorch"
 _default_vela_config_file = _current_file_dir / "scripts" / "vela" / "default_vela.ini"
@@ -280,10 +283,14 @@ if __name__ == "__main__":
         if len(parsed_args.use_case_resources_file) == 0 \
         else list(itertools.chain(*parsed_args.use_case_resources_file))
 
+    requirements_files = [parsed_args.requirements_file]
+    if setup.set_up_executorch:
+        requirements_files.append(default_executorch_requirements_path)
+
     paths = PathsConfig(
         use_case_resources_files=use_case_resources_files,
         downloads_dir=parsed_args.downloads_dir,
-        additional_requirements_file=parsed_args.requirements_file,
+        requirements_files=requirements_files,
         executorch_path=default_executorch_path,
         vela_config_file=_default_vela_config_file,
     )

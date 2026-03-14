@@ -57,7 +57,7 @@ class PathsConfig:
     """
     Paths used by the resource setup process.
     """
-    additional_requirements_file: typing.Optional[Path] = None
+    requirements_files: typing.List[Path] = field(default_factory=list)
     use_case_resources_files: typing.List[Path] = field(default_factory=list)
     downloads_dir: typing.Optional[Path] = None
     executorch_path: typing.Optional[Path] = None

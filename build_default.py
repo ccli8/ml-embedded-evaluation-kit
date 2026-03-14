@@ -207,7 +207,7 @@ def download_resources(build_config: BuildConfig) -> Path:
         additional_npu_config_names=[build_config.npu_config_name]
     )
     paths_config = PathsConfig(
-        additional_requirements_file=default_requirements_path,
+        requirements_files=[default_requirements_path],
         use_case_resources_files=[default_use_case_resources_path],
         downloads_dir=default_downloads_path,
         executorch_path=default_executorch_path

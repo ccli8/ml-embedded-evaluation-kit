@@ -674,7 +674,7 @@ def set_up_resources(
     )
     context.python_env = set_up_python_venv(
         venv_dir,
-        paths_config.additional_requirements_file
+        paths_config.requirements_files
     )
 
     setup_vela(

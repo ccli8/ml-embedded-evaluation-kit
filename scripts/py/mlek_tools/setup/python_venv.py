@@ -126,15 +126,15 @@ class PythonEnv:
 
 def set_up_python_venv(
         env_dir: Path,
-        additional_requirements_file: typing.Optional[Path] = None,
+        requirements_files: typing.Iterable[Path] = (),
 ) -> PythonEnv:
     """
     Create or reuse a Python virtual environment at ``env_dir``.
 
-    :param env_dir:                         Path to the virtual environment directory.
-    :param additional_requirements_file:    Optional requirements file to install into
-                                            the venv after creation.
-    :return:                                A :class:`PythonEnv` for the virtual environment.
+    :param env_dir:             Path to the virtual environment directory.
+    :param requirements_files:  Requirements files to install into the venv after
+                                creation.
+    :return:                    A :class:`PythonEnv` for the virtual environment.
     """
     venv_builder = venv.EnvBuilder(with_pip=True, upgrade_deps=True)
     venv_context = venv_builder.ensure_directories(env_dir=env_dir)
@@ -150,7 +150,8 @@ def set_up_python_venv(
 
     python_env = PythonEnv(path=env_dir)
 
-    if additional_requirements_file and os.path.isfile(additional_requirements_file):
-        python_env.pip_install_requirements(additional_requirements_file)
+    for requirements_file in requirements_files:
+        if os.path.isfile(requirements_file):
+            python_env.pip_install_requirements(requirements_file)
 
     return python_env
