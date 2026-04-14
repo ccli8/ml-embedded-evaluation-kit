@@ -43,6 +43,7 @@ repos:
       - id: cppcheck
         args:
           - --error-exitcode=1
+          - --check-level=exhaustive
           - --enable=performance,portability
           - --suppress=missingInclude
           - --suppress=missingIncludeSystem

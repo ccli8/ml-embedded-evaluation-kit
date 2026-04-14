@@ -1,5 +1,5 @@
 #----------------------------------------------------------------------------
-#  SPDX-FileCopyrightText: Copyright 2025 Arm Limited and/or its
+#  SPDX-FileCopyrightText: Copyright 2025-2026 Arm Limited and/or its
 #  affiliates <open-source-office@arm.com>
 #  SPDX-License-Identifier: Apache-2.0
 #
@@ -58,6 +58,7 @@ add_library(${ML_FWK_TFLM_TARGET} STATIC
     MobileNetModel.cc
     TestModel.cc
     TflmModel.cc
+    TflmResourceVariables.cc
     MicroMutableAllOpsResolver.cc
 )
 
