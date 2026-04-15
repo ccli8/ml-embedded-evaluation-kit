@@ -40,8 +40,14 @@ The CMake build framework allows the parameters to control the behavior of each 
 
 - `PULSE_OFF`: The number of cycles where addresses are blocked. The default value is `5100`.
 
-- `BWCAP`: Maximum number of 64-bit words transferred per pulse cycle. A pulse cycle is defined by `PULSE_ON`
-  and `PULSE_OFF`. `0` is inferred as infinite and the default value is `625`.
+- `BWCAP`: Maximum number of bus-width words (beats) transferred per pulse cycle. A pulse cycle is defined by
+  `PULSE_ON` and `PULSE_OFF`. `0` is inferred as infinite and the default value is `625`.
+
+  The bus-width word size depends on the *Arm Ethos-U* NPU AXI bus width:
+
+  - `U55`: 64-bit words
+  - `U65`: 128-bit words
+  - `U85`: 128-bit words
 
   > **Note:** The bandwidth cap `BWCAP` operates on the transaction level and, because of its simple implementation,
   > the accuracy is limited.
@@ -92,7 +98,8 @@ For a clock rate of 500MHz, this would translate to:
 - The maximum duty cycle for any operation is:\
   ![Maximum duty cycle formula](../media/F1.png)
 
-- Maximum bit rate for this bus (64-bit wide) is:\
+- Maximum bit rate for this bus is based on the AXI bus width
+  (`64-bit` for `U55`; `128-bit` for `U65` and `U85`):\
   ![Maximum bit rate formula](../media/F2.png)
 
 - With a read latency of 64 cycles, and maximum pending reads as 2, each read could be a maximum of 64 or 128 bytes. As
