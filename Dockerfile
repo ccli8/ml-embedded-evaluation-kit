@@ -23,6 +23,11 @@
 #    docker build --target base  -t mlek:base  .
 #    docker build                -t mlek:tools .   (default = tools)
 #
+#  Override the default non-root user IDs when needed:
+#    docker build --target tools -t mlek:tools \
+#        --build-arg USER_UID="$(id -u)" --build-arg USER_GID="$(id -g)" .
+#  The override values must remain non-root (do not pass 0:0).
+#
 #  Cross-compiling for arm64 (Podman does not auto-inject TARGETARCH from --platform):
 #    podman build --target tools -t mlek:tools-arm64 \
 #        --platform linux/arm64 --build-arg TARGETARCH=arm64 .
@@ -35,13 +40,18 @@ FROM ubuntu:24.04 AS base
 
 # BuildKit sets TARGETARCH automatically based on --platform (e.g. amd64, arm64).
 ARG TARGETARCH
+ARG USERNAME=mlek
+ARG USER_UID=1000
+ARG USER_GID=${USER_UID}
 
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         build-essential \
+        cmake \
         git \
+        ninja-build \
         python3 \
         python3-pip \
         python3-dev \
@@ -53,6 +63,33 @@ RUN apt-get update && \
         sudo \
     && rm -rf /var/lib/apt/lists/*
 
+# Create a non-root user so bind-mounted workspaces do not default to root ownership.
+RUN set -eux; \
+    if [ "${USER_UID}" = "0" ] || [ "${USER_GID}" = "0" ]; then \
+        echo "USER_UID and USER_GID must be non-root values." >&2; \
+        exit 1; \
+    fi; \
+    existingGroupName="$(getent group "${USER_GID}" | cut -d: -f1 || true)"; \
+    existingUserName="$(getent passwd "${USER_UID}" | cut -d: -f1 || true)"; \
+    if [ -n "${existingGroupName}" ] && [ "${existingGroupName}" != "${USERNAME}" ] && \
+        ! getent group "${USERNAME}" >/dev/null; then \
+        groupmod -n "${USERNAME}" "${existingGroupName}"; \
+    elif [ -z "${existingGroupName}" ]; then \
+        groupadd --gid "${USER_GID}" "${USERNAME}"; \
+    fi; \
+    if ! id -u "${USERNAME}" >/dev/null 2>&1 && [ -n "${existingUserName}" ]; then \
+        usermod --login "${USERNAME}" --home "/home/${USERNAME}" --move-home "${existingUserName}"; \
+    fi; \
+    if id -u "${USERNAME}" >/dev/null 2>&1; then \
+        usermod --uid "${USER_UID}" --gid "${USER_GID}" "${USERNAME}"; \
+    else \
+        useradd --uid "${USER_UID}" --gid "${USER_GID}" -m -s /bin/bash "${USERNAME}"; \
+    fi; \
+    mkdir -p "/home/${USERNAME}"; \
+    chown -R "${USER_UID}:${USER_GID}" "/home/${USERNAME}"; \
+    echo "${USERNAME} ALL=(root) NOPASSWD:ALL" > "/etc/sudoers.d/${USERNAME}"; \
+    chmod 0440 "/etc/sudoers.d/${USERNAME}"
+
 # Verify host toolchain and Python are present.
 RUN gcc --version && g++ --version && python3 --version
 
@@ -63,6 +100,9 @@ RUN gcc --version && g++ --version && python3 --version
 FROM base AS tools
 
 ARG TARGETARCH
+ARG USERNAME=mlek
+ARG USER_UID=1000
+ARG USER_GID=${USER_UID}
 
 ARG FVP_BASE_URL="https://developer.arm.com/-/cdn-downloads/permalink/FVPs-Corstone-IoT"
 ARG FVP_300="FVP_Corstone_SSE-300"
@@ -219,3 +259,5 @@ RUN { \
     echo "alias run_fvp_315_u65='\"${FVP_315_U65}\" ${FVP_315_ARGS}'"; \
     echo "alias run_fvp_320_u85='\"${FVP_320_U85}\" ${FVP_320_ARGS}'"; \
     } >> /etc/bash.bashrc
+
+USER ${USERNAME}
