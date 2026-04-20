@@ -169,7 +169,8 @@ Full guidelines: [coding_guidelines.md](docs/sections/coding_guidelines.md). Key
 
 ### Static Analysis
 - **clang-format**: Configuration in `.clang-format` (LLVM-based style). Run: `clang-format -style=file -i <file>`
-- **cppcheck**: Used via pre-push git hook. Setup: `python scripts/py/setup_hooks.py <hooks-dir>`
+- **pre-commit**: Install with `python3 -m pip install pre-commit` and register with `pre-commit install`
+- **cppcheck**: Run via the configured `pre-commit` hook, for example `pre-commit run cppcheck --all-files`
 - **PyLint**: Python code must satisfy PyLint `3.3.8`.
 - Avoid PyLint `disable` statements where practical; prefer refactoring to satisfy checks.
 
@@ -205,7 +206,7 @@ current year using these rules:
 - DCO sign-off required on all commits (`git commit -s`)
 - Code review via [Arm's GitLab](https://git.gitlab.arm.com/artificial-intelligence/ethos-u/ml-embedded-evaluation-kit)
 - All build variants and unit tests must pass before submission
-- Run clang-format and cppcheck before pushing
+- Run `pre-commit` before pushing
 
 ## Key Dependencies (Git Submodules)
 
