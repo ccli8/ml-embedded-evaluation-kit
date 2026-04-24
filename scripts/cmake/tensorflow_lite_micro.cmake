@@ -91,9 +91,16 @@ function(build_tflite_micro_cmake)
     endif()
 
     if (CMAKE_CXX_COMPILER_ID STREQUAL "ARMClang")
-        # Additional option to enable "full" floating point standard conformance
-        # (needed for NaNs and infinity).
-        target_compile_options(tflu PRIVATE "-ffp-mode=full")
+        # Keep the TensorFlow Lite Micro build in full floating-point
+        # conformance mode for NaNs and infinity, but disable the trapping and
+        # rounding sub-modes that trigger the Arm Compiler slowdown in the
+        # reference Quantize/Dequantize kernels. See:
+        # - artificial-intelligence/ethos-u/ml-embedded-evaluation-kit#2
+        target_compile_options(tflu PRIVATE
+            "-Wno-overriding-option"
+            "-ffp-mode=full"
+            "-fno-trapping-math"
+            "-fno-rounding-math")
     endif()
 
     # If CPU_HEADER_FILE is defined, add this to compile definitions.
