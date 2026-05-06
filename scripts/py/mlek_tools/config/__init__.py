@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 #  SPDX-FileCopyrightText:  Copyright 2026 Arm Limited and/or its
 #  affiliates <open-source-office@arm.com>
 #  SPDX-License-Identifier: Apache-2.0
@@ -14,19 +13,27 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-"""Python environment setup, installation helpers, and shared utilities."""
-from mlek_tools.setup.install import install_executorch_project, setup_executorch, setup_vela
-from mlek_tools.setup.python_venv import PythonEnv, set_up_python_venv
-from mlek_tools.setup.util import call_command, download_file, get_md5sum_for_file, remove_tree_dir
+"""Configuration dataclasses for mlek_tools."""
+from mlek_tools.config.download import DownloadConfig
+from mlek_tools.config.executorch import ExecuTorchConfig
+from mlek_tools.config.npu import (
+    NpuConfig,
+    NpuConfigs,
+    get_default_npu_config_from_name,
+    valid_npu_configs,
+)
+from mlek_tools.config.optimizer import OptimizerConfig
+from mlek_tools.config.paths import PathsConfig
+from mlek_tools.config.tflite import TfliteConfig
 
 __all__ = [
-    "PythonEnv",
-    "call_command",
-    "download_file",
-    "get_md5sum_for_file",
-    "install_executorch_project",
-    "remove_tree_dir",
-    "set_up_python_venv",
-    "setup_executorch",
-    "setup_vela",
+    "DownloadConfig",
+    "ExecuTorchConfig",
+    "NpuConfig",
+    "NpuConfigs",
+    "OptimizerConfig",
+    "PathsConfig",
+    "TfliteConfig",
+    "get_default_npu_config_from_name",
+    "valid_npu_configs",
 ]

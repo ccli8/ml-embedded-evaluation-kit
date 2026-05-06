@@ -14,3 +14,39 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 """Python tools for ML model resource setup and code generation."""
+# Register the package alias before absolute mlek_tools imports below. This supports
+# loading through the source-tree compatibility path, scripts.py.mlek_tools.
+# pylint: disable=wrong-import-position
+import sys
+
+sys.modules.setdefault("mlek_tools", sys.modules[__name__])
+
+from mlek_tools.config import (
+    DownloadConfig,
+    ExecuTorchConfig,
+    NpuConfig,
+    NpuConfigs,
+    OptimizerConfig,
+    PathsConfig,
+    TfliteConfig,
+    get_default_npu_config_from_name,
+    valid_npu_configs,
+)
+from mlek_tools.config import __all__ as _config_exports
+from mlek_tools.orchestrate import set_up_resources
+from mlek_tools.setup.python_venv import PythonEnv, set_up_python_venv
+from mlek_tools.setup.util import call_command, download_file, get_md5sum_for_file, remove_tree_dir
+from mlek_tools.use_case.model import ExecuTorchResource, UseCase, load_use_case_resources
+
+__all__ = _config_exports + [
+    "set_up_resources",
+    "PythonEnv",
+    "set_up_python_venv",
+    "call_command",
+    "download_file",
+    "get_md5sum_for_file",
+    "remove_tree_dir",
+    "ExecuTorchResource",
+    "UseCase",
+    "load_use_case_resources",
+]

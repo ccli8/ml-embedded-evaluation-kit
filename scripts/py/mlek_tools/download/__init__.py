@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 #  SPDX-FileCopyrightText:  Copyright 2026 Arm Limited and/or its
 #  affiliates <open-source-office@arm.com>
 #  SPDX-License-Identifier: Apache-2.0
@@ -14,19 +13,19 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-"""Python environment setup, installation helpers, and shared utilities."""
-from mlek_tools.setup.install import install_executorch_project, setup_executorch, setup_vela
-from mlek_tools.setup.python_venv import PythonEnv, set_up_python_venv
-from mlek_tools.setup.util import call_command, download_file, get_md5sum_for_file, remove_tree_dir
+"""Resource download flow."""
+from mlek_tools.download.resources import (
+    download_resources,
+    get_downloaded_resources_directory,
+    get_resources_to_download,
+    initialize_resources_directory,
+    initialize_use_case_resources_directory,
+)
 
 __all__ = [
-    "PythonEnv",
-    "call_command",
-    "download_file",
-    "get_md5sum_for_file",
-    "install_executorch_project",
-    "remove_tree_dir",
-    "set_up_python_venv",
-    "setup_executorch",
-    "setup_vela",
+    "download_resources",
+    "get_downloaded_resources_directory",
+    "get_resources_to_download",
+    "initialize_resources_directory",
+    "initialize_use_case_resources_directory",
 ]

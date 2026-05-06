@@ -25,7 +25,7 @@ import venv
 from dataclasses import dataclass
 from pathlib import Path
 
-from .util import call_command
+from mlek_tools.setup.util import call_command
 
 
 @dataclass

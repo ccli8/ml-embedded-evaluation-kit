@@ -59,7 +59,7 @@ endif()
 include(common_opts)
 
 # Check if the resources_downloaded needs update.
-check_update_public_resources(${RESOURCES_PATH})
+#check_update_public_resources(${RESOURCES_PATH})
 
 # Find the platform's build configuration and then add it.
 add_platform_build_configuration(TARGET_PLATFORM ${TARGET_PLATFORM})

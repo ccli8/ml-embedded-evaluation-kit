@@ -1,5 +1,5 @@
-#  SPDX-FileCopyrightText:  Copyright 2026 Arm Limited and/or
-#  its affiliates <open-source-office@arm.com>
+#  SPDX-FileCopyrightText:  Copyright 2025-2026 Arm Limited and/or its
+#  affiliates <open-source-office@arm.com>
 #  SPDX-License-Identifier: Apache-2.0
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,17 +13,17 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-"""C++ source file generation utilities."""
-from mlek_tools.gen.gen_utils import (
-    AudioSample,
-    gen_header,
-    read_audio_file,
-    resample_audio_clip,
-    res_data_type,
-    res_type_list,
-)
+"""Download and operational configuration."""
+import typing
+from dataclasses import dataclass, field
 
-__all__ = [
-    "AudioSample", "gen_header", "read_audio_file",
-    "resample_audio_clip", "res_data_type", "res_type_list",
-]
+from mlek_tools.setup.util import HttpHeadersType
+
+
+@dataclass(frozen=True)
+class DownloadConfig:
+    """Controls which use cases are downloaded and how downloads are performed."""
+    use_case_names: typing.List[str] = field(default_factory=list)
+    parallel: int = 1
+    http_headers: HttpHeadersType = field(default_factory=dict)
+    check_clean_folder: bool = False

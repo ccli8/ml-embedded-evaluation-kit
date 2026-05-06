@@ -29,18 +29,24 @@ from argparse import ArgumentParser
 from dataclasses import dataclass
 from pathlib import Path
 
-from scripts.py.mlek_tools.setup.npu_config import (
+from scripts.py.mlek_tools.config.download import DownloadConfig
+from scripts.py.mlek_tools.config.executorch import ExecuTorchConfig
+from scripts.py.mlek_tools.config.npu import (
     get_default_npu_config_from_name,
     valid_npu_configs,
 )
-from scripts.py.mlek_tools.setup.setup_config import (
-    SetupConfig, PathsConfig, OptimizationConfig,
-)
+from scripts.py.mlek_tools.config.optimizer import OptimizerConfig
+from scripts.py.mlek_tools.config.paths import PathsConfig
+from scripts.py.mlek_tools.config.tflite import TfliteConfig
 from set_up_default_resources import EXECUTORCH_EXCLUDED_NPU_PROCESSOR_IDS
+from set_up_default_resources import INSTALL_VELA_FROM_SOURCE
 from set_up_default_resources import MLFramework, valid_ml_frameworks
+from set_up_default_resources import VELA_URL, VELA_VERSION
 from set_up_default_resources import default_downloads_path
 from set_up_default_resources import default_executorch_path
+from set_up_default_resources import default_executorch_requirements_path
 from set_up_default_resources import default_npu_configs
+from set_up_default_resources import default_requirements_path
 from set_up_default_resources import default_use_case_resources_path
 from set_up_default_resources import default_vela_config_file
 from set_up_default_resources import set_up_resources_with_defaults as set_up_resources
@@ -119,6 +125,18 @@ class BuildConfig:
     ml_framework: MLFramework
 
 
+@dataclass(frozen=True)
+class ResourceConfigs:
+    """
+    Resource setup configuration groups.
+    """
+    download: DownloadConfig
+    optimizer: OptimizerConfig
+    tflite: TfliteConfig
+    executorch: ExecuTorchConfig
+    paths: PathsConfig
+
+
 def get_toolchain_file_name(toolchain: str) -> str:
     """
     Get the name of the toolchain file for the toolchain.
@@ -188,9 +206,7 @@ def prep_build_dir(
 
 def run(
         build_config: BuildConfig,
-        setup_config: SetupConfig,
-        optimization_config: OptimizationConfig,
-        paths_config: PathsConfig
+        resource_configs: ResourceConfigs,
 ):
     """
     Run the helpers scripts.
@@ -198,9 +214,7 @@ def run(
     Parameters:
     ----------
     build_config (BuildArgs)        : Config for the build
-    setup_config (BuildArgs)        : Setup config
-    optimization_config (BuildArgs) : Optimization config
-    paths_config (BuildArgs)        : Paths config
+    resource_configs (ResourceConfigs): Resource setup config groups
     """
 
     # 1. Make sure the toolchain is supported, and set the right one here
@@ -208,9 +222,15 @@ def run(
 
     # 2. Download models if specified
     if build_config.download_resources:
-        env_path = set_up_resources(setup_config, optimization_config, paths_config)
+        env_path = set_up_resources(
+            resource_configs.download,
+            resource_configs.optimizer,
+            resource_configs.tflite,
+            resource_configs.executorch,
+            resource_configs.paths,
+        )
     else:
-        env_path = paths_config.downloads_dir / "env"
+        env_path = resource_configs.paths.downloads_dir / "env"
 
     # 3. Build default configuration
     logging.info("Building default configuration.")
@@ -359,23 +379,49 @@ if __name__ == "__main__":
         ml_framework=MLFramework(parsed_args.ml_framework)
     )
 
-    setup = SetupConfig(
-        run_vela_on_models=not parsed_args.skip_vela,
-        set_up_executorch=build.ml_framework == MLFramework.EXECUTORCH,
-        set_up_tensorflow=build.ml_framework == MLFramework.TENSORFLOW_LITE_MICRO,
+    use_tflm = build.ml_framework == MLFramework.TENSORFLOW_LITE_MICRO
+    use_executorch = build.ml_framework == MLFramework.EXECUTORCH
+
+    download = DownloadConfig(
         parallel=parsed_args.make_jobs,
-        executorch_excluded_npu_processor_ids=EXECUTORCH_EXCLUDED_NPU_PROCESSOR_IDS,
     )
 
-    optimization = OptimizationConfig(
-        additional_npu_config_names=[build.npu_config_name]
+    optimizer = OptimizerConfig(
+        vela_config_file=default_vela_config_file,
+        additional_npu_config_names=[build.npu_config_name],
     )
+
+    tflite = TfliteConfig(
+        enabled=use_tflm,
+        run_vela=not parsed_args.skip_vela,
+        vela_version=VELA_VERSION,
+        vela_url=VELA_URL,
+        vela_install_from_source=INSTALL_VELA_FROM_SOURCE,
+    )
+
+    executorch = ExecuTorchConfig(
+        enabled=use_executorch,
+        run_lowering=not parsed_args.skip_vela,
+        executorch_path=default_executorch_path,
+        excluded_npu_processor_ids=EXECUTORCH_EXCLUDED_NPU_PROCESSOR_IDS,
+    )
+
+    requirements_files = [default_requirements_path]
+    if use_executorch:
+        requirements_files.append(default_executorch_requirements_path)
 
     paths = PathsConfig(
         use_case_resources_files=[default_use_case_resources_path],
         downloads_dir=default_downloads_path,
-        executorch_path=default_executorch_path,
-        vela_config_file=default_vela_config_file,
+        requirements_files=requirements_files,
     )
 
-    run(build, setup, optimization, paths)
+    resources = ResourceConfigs(
+        download=download,
+        optimizer=optimizer,
+        tflite=tflite,
+        executorch=executorch,
+        paths=paths,
+    )
+
+    run(build, resources)

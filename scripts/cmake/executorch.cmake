@@ -234,7 +234,7 @@ function(generate_pte_ops_lib)
     endif()
 
     # Generate C++ bindings to register kernels into both PyTorch (for AOT) and
-    # Executorch (for runtime). Here select all ops in functions.yaml
+    # ExecuTorch (for runtime). Here select all ops in functions.yaml
     if ("${PARSED_SELECT_OPS_LIST}" STREQUAL "" AND
         "${PTE_FOR_OPS_LIB}" STREQUAL "")
         message(STATUS "No portable ops library needs to be generated.")
