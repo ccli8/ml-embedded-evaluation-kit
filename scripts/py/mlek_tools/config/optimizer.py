@@ -33,6 +33,7 @@ class OptimizerConfig:
     vela_config_file: typing.Optional[Path] = None
     arena_cache_size: int = 0
     cop_format: str = "COP1"
+    separate_io_regions: bool = False
     additional_npu_config_names: typing.List[str] = field(default_factory=list)
 
     def __post_init__(self):
@@ -65,6 +66,8 @@ class OptimizerConfig:
         effective_arena = self._effective_arena_cache_size(memory_mode)
         if effective_arena:
             args.append(f"--arena-cache-size={effective_arena}")
+        if self.separate_io_regions:
+            args.append("--separate-io-regions")
         return args
 
     def to_vela_cli_args(self, memory_mode: str = "") -> typing.List[str]:
