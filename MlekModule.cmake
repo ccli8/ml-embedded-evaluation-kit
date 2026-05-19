@@ -1,5 +1,5 @@
 #----------------------------------------------------------------------------
-#  SPDX-FileCopyrightText: Copyright 2024-2025 Arm Limited and/or its
+#  SPDX-FileCopyrightText: Copyright 2024-2026 Arm Limited and/or its
 #  affiliates <open-source-office@arm.com>
 #  SPDX-License-Identifier: Apache-2.0
 #
@@ -74,9 +74,11 @@ assert_defined(USE_CASE_BUILD)
 assert_defined(CPU_PROFILE_ENABLED)
 assert_defined(CMAKE_TOOLCHAIN_FILE)
 
-if ("ExecuTorch" STREQUAL ${ML_FRAMEWORK})
+if ("${MLEK_RUNTIME_PROVIDER}" STREQUAL "MLEK"
+        AND "ExecuTorch" STREQUAL "${ML_FRAMEWORK}")
     assert_defined(EXECUTORCH_SRC_PATH)
-elseif("TensorFlowLiteMicro" STREQUAL ${ML_FRAMEWORK})
+elseif("${MLEK_RUNTIME_PROVIDER}" STREQUAL "MLEK"
+        AND "TensorFlowLiteMicro" STREQUAL "${ML_FRAMEWORK}")
     assert_defined(TENSORFLOW_SRC_PATH)
 endif()
 

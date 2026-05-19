@@ -35,6 +35,14 @@ USER_OPTION(MLEK_LOG_LEVEL "Log level for the application"
     MLEK_LOG_LEVEL_INFO
     STRING)
 
+USER_OPTION(MLEK_RUNTIME_PROVIDER "Select the provider for the ML runtime integration."
+    MLEK
+    STRING)
+
+set_property(CACHE MLEK_RUNTIME_PROVIDER PROPERTY STRINGS
+    MLEK
+    External)
+
 USER_OPTION(ML_FRAMEWORK "Select the ML inference framework to be used."
     "TensorFlowLiteMicro"
     STRING
@@ -45,7 +53,8 @@ set_property(CACHE ML_FRAMEWORK PROPERTY STRINGS
     ExecuTorch)
 
 ## TensorFlow options
-if (${ML_FRAMEWORK} STREQUAL TensorFlowLiteMicro)
+if ("${MLEK_RUNTIME_PROVIDER}" STREQUAL "MLEK"
+        AND "${ML_FRAMEWORK}" STREQUAL "TensorFlowLiteMicro")
     USER_OPTION(TENSORFLOW_SRC_PATH "Path to the root of the TensorFlow Lite Micro sources."
             "${MLEK_DEPENDENCY_ROOT_DIR}/tensorflow"
             PATH)
@@ -61,10 +70,15 @@ if (${ML_FRAMEWORK} STREQUAL TensorFlowLiteMicro)
     USER_OPTION(TENSORFLOW_LITE_MICRO_CLEAN_BUILD "Select if clean target should be added to a list of targets."
             ON
             BOOL)
-elseif (${ML_FRAMEWORK} STREQUAL ExecuTorch)
+elseif ("${MLEK_RUNTIME_PROVIDER}" STREQUAL "MLEK"
+        AND "${ML_FRAMEWORK}" STREQUAL "ExecuTorch")
     USER_OPTION(EXECUTORCH_SRC_PATH "Root directory for ExecuTorch source tree."
             "${MLEK_DEPENDENCY_ROOT_DIR}/executorch"
             PATH)
+elseif ("${MLEK_RUNTIME_PROVIDER}" STREQUAL "External")
+    message(STATUS "ML runtime is provided externally; skipping MLEK runtime options.")
+elseif (NOT "${MLEK_RUNTIME_PROVIDER}" STREQUAL "MLEK")
+    message(FATAL_ERROR "Invalid MLEK_RUNTIME_PROVIDER: ${MLEK_RUNTIME_PROVIDER}")
 else ()
     message(FATAL_ERROR "Invalid ML_FRAMEWORK: ${ML_FRAMEWORK}")
 endif ()
