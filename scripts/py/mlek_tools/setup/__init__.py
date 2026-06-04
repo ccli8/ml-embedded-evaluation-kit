@@ -17,16 +17,23 @@
 """Python environment setup, installation helpers, and shared utilities."""
 from mlek_tools.setup.install import install_executorch_project, setup_executorch, setup_vela
 from mlek_tools.setup.python_venv import PythonEnv, set_up_python_venv
-from mlek_tools.setup.util import call_command, download_file, get_md5sum_for_file, remove_tree_dir
+from mlek_tools.setup.util import (
+    call_command,
+    download_file,
+    get_sha256sum_for_file,
+    remove_tree_dir,
+    verify_file_sha256,
+)
 
 __all__ = [
     "PythonEnv",
     "call_command",
     "download_file",
-    "get_md5sum_for_file",
+    "get_sha256sum_for_file",
     "install_executorch_project",
     "remove_tree_dir",
     "set_up_python_venv",
     "setup_executorch",
     "setup_vela",
+    "verify_file_sha256",
 ]

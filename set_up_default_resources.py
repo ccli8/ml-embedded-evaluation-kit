@@ -37,7 +37,7 @@ from scripts.py.mlek_tools.config.paths import PathsConfig
 from scripts.py.mlek_tools.config.tflite import TfliteConfig
 from scripts.py.mlek_tools.orchestrate import set_up_resources
 from scripts.py.mlek_tools.setup.python_venv import PythonEnv
-from scripts.py.mlek_tools.setup.util import get_md5sum_for_file
+from scripts.py.mlek_tools.setup.util import get_sha256sum_for_file
 from scripts.py.mlek_tools.use_case.model import load_use_case_resources
 
 
@@ -97,7 +97,7 @@ def set_up_resources_with_defaults(
 
     :return: Path to the root of the virtual environment.
     """
-    setup_script_hash = get_md5sum_for_file(Path(__file__).resolve())
+    setup_script_hash = get_sha256sum_for_file(Path(__file__).resolve())
 
     venv_path = set_up_resources(
         download_config=download_config,

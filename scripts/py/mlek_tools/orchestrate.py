@@ -30,6 +30,7 @@ from mlek_tools.config.optimizer import OptimizerConfig
 from mlek_tools.config.paths import PathsConfig
 from mlek_tools.config.tflite import TfliteConfig
 from mlek_tools.download.resources import (
+    ResourceDownload,
     download_resources,
     get_resources_to_download,
     initialize_resources_directory,
@@ -52,7 +53,7 @@ def _update_metadata(
         vela_version: str,
 ) -> None:
     metadata_dict["ethosu_vela_version"] = vela_version
-    metadata_dict["set_up_script_md5sum"] = setup_script_hash.strip("\n")
+    metadata_dict["set_up_script_sha256sum"] = setup_script_hash.strip("\n")
     metadata_dict["resources_info"] = [dataclasses.asdict(uc) for uc in use_case_resources]
     with open(metadata_file_path, "w", encoding="utf8") as metadata_file:
         json.dump(metadata_dict, metadata_file, indent=4, default=str)
@@ -179,7 +180,7 @@ def set_up_resources(
     :param tflite_config:           TFLite Micro / Vela framework settings.
     :param executorch_config:       ExecuTorch framework settings.
     :param paths_config:            Project filesystem paths.
-    :param setup_script_hash:       MD5 of the calling setup script for cache validation.
+    :param setup_script_hash:       SHA-256 of the calling setup script for cache validation.
     :param default_npu_configs:     NPU configs always optimized for.
     :param default_downloads_path:  Logged as a warning if ``paths_config.downloads_dir`` differs.
     :param min_python_version:      Minimum Python version tuple.
@@ -250,7 +251,7 @@ def set_up_resources(
 
     # ── Download phase ───────────────────────────────────────────────────────
     logging.info("Downloading resources.")
-    to_download: typing.List = []
+    to_download: typing.List[ResourceDownload] = []
     for use_case in use_case_resources:
         initialize_use_case_resources_directory(
             use_case,

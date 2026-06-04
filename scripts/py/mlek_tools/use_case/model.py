@@ -38,6 +38,19 @@ class UseCaseResource:
     name: str
     url: str
     sub_folder: typing.Optional[str] = None
+    sha256: typing.Optional[str] = None
+
+    def __post_init__(self):
+        """Validate and normalize the optional SHA-256 digest."""
+        if self.sha256 is None:
+            return
+
+        normalized_sha256 = self.sha256.lower()
+        if not re.fullmatch(r"[0-9a-f]{64}", normalized_sha256):
+            raise ValueError(
+                f"SHA-256 for resource {self.name} must be 64 hexadecimal characters"
+            )
+        object.__setattr__(self, "sha256", normalized_sha256)
 
 
 @dataclass(frozen=True)

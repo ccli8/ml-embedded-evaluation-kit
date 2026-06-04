@@ -15,17 +15,23 @@
 #  limitations under the License.
 """Resource download flow."""
 from mlek_tools.download.resources import (
+    ResourceDownload,
     download_resources,
+    get_downloaded_resource_path,
     get_downloaded_resources_directory,
     get_resources_to_download,
     initialize_resources_directory,
     initialize_use_case_resources_directory,
+    verify_resource_sha256,
 )
 
 __all__ = [
+    "ResourceDownload",
     "download_resources",
+    "get_downloaded_resource_path",
     "get_downloaded_resources_directory",
     "get_resources_to_download",
     "initialize_resources_directory",
     "initialize_use_case_resources_directory",
+    "verify_resource_sha256",
 ]

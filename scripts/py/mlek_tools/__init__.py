@@ -35,7 +35,13 @@ from mlek_tools.config import (
 from mlek_tools.config import __all__ as _config_exports
 from mlek_tools.orchestrate import set_up_resources
 from mlek_tools.setup.python_venv import PythonEnv, set_up_python_venv
-from mlek_tools.setup.util import call_command, download_file, get_md5sum_for_file, remove_tree_dir
+from mlek_tools.setup.util import (
+    call_command,
+    download_file,
+    get_sha256sum_for_file,
+    remove_tree_dir,
+    verify_file_sha256,
+)
 from mlek_tools.use_case.model import ExecuTorchResource, UseCase, load_use_case_resources
 
 __all__ = _config_exports + [
@@ -44,8 +50,9 @@ __all__ = _config_exports + [
     "set_up_python_venv",
     "call_command",
     "download_file",
-    "get_md5sum_for_file",
+    "get_sha256sum_for_file",
     "remove_tree_dir",
+    "verify_file_sha256",
     "ExecuTorchResource",
     "UseCase",
     "load_use_case_resources",

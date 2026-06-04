@@ -21,7 +21,7 @@ import typing
 from pathlib import Path
 
 from mlek_tools.config.npu import NpuConfig
-from mlek_tools.setup.util import get_md5sum_for_file
+from mlek_tools.setup.util import get_sha256sum_for_file
 
 _OPTIMIZATION_METADATA_SUFFIX = ".mlek_metadata.json"
 
@@ -41,13 +41,13 @@ def get_optimization_input_hash(input_model: typing.Union[str, Path]) -> str:
     Return a stable hash for an optimization input.
 
     :param input_model: Model path or built-in model identifier.
-    :return:            MD5 hash of the model file or identifier.
+    :return:            SHA-256 hash of the model file or identifier.
     """
     input_path = Path(input_model)
     if input_path.is_file():
-        return get_md5sum_for_file(input_path)
+        return get_sha256sum_for_file(input_path)
 
-    return hashlib.md5(str(input_model).encode("utf8")).hexdigest()
+    return hashlib.sha256(str(input_model).encode("utf8")).hexdigest()
 
 
 def add_entrypoint_metadata(
@@ -66,7 +66,7 @@ def add_entrypoint_metadata(
     metadata["lowering_entrypoint"] = str(lowering_entrypoint)
     lowering_entrypoint_path = Path(lowering_entrypoint)
     if lowering_entrypoint_path.is_file():
-        metadata["lowering_entrypoint_hash"] = get_md5sum_for_file(
+        metadata["lowering_entrypoint_hash"] = get_sha256sum_for_file(
             lowering_entrypoint_path
         )
 
