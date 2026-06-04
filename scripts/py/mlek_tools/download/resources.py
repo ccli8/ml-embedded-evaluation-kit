@@ -209,7 +209,10 @@ def download_resources(
     :param parallel:        Number of worker threads. ``1`` means serial.
     """
     if parallel > 1:
-        with concurrent.futures.ThreadPoolExecutor(max_workers=parallel) as executor:
+        with concurrent.futures.ThreadPoolExecutor(
+                max_workers=parallel,
+                thread_name_prefix="download",
+        ) as executor:
             futures = [
                 executor.submit(
                     download_file,

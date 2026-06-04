@@ -16,6 +16,13 @@
 #  limitations under the License.
 """Python environment setup, installation helpers, and shared utilities."""
 from mlek_tools.setup.install import install_executorch_project, setup_executorch, setup_vela
+from mlek_tools.setup.logging_config import (
+    LOG_LEVELS,
+    ColourFormatter,
+    LoggingOptions,
+    configure_logging,
+    parse_log_level,
+)
 from mlek_tools.setup.python_venv import PythonEnv, set_up_python_venv
 from mlek_tools.setup.util import (
     call_command,
@@ -27,7 +34,11 @@ from mlek_tools.setup.util import (
 
 __all__ = [
     "PythonEnv",
+    "ColourFormatter",
+    "LoggingOptions",
+    "LOG_LEVELS",
     "call_command",
+    "configure_logging",
     "download_file",
     "get_sha256sum_for_file",
     "install_executorch_project",
@@ -35,5 +46,6 @@ __all__ = [
     "set_up_python_venv",
     "setup_executorch",
     "setup_vela",
+    "parse_log_level",
     "verify_file_sha256",
 ]

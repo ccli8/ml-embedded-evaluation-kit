@@ -22,8 +22,6 @@ Project-specific defaults (versions, paths, NPU selections) are defined here;
 all orchestration logic lives in the mlek_tools package.
 """
 import itertools
-import logging
-import sys
 import typing
 from argparse import Action, ArgumentParser, ArgumentTypeError
 from enum import Enum
@@ -36,6 +34,12 @@ from scripts.py.mlek_tools.config.optimizer import OptimizerConfig
 from scripts.py.mlek_tools.config.paths import PathsConfig
 from scripts.py.mlek_tools.config.tflite import TfliteConfig
 from scripts.py.mlek_tools.orchestrate import set_up_resources
+from scripts.py.mlek_tools.setup.logging_config import (
+    LOG_LEVELS,
+    LoggingOptions,
+    configure_logging,
+    parse_log_level,
+)
 from scripts.py.mlek_tools.setup.python_venv import PythonEnv
 from scripts.py.mlek_tools.setup.util import get_sha256sum_for_file
 from scripts.py.mlek_tools.use_case.model import load_use_case_resources
@@ -144,6 +148,21 @@ class HttpHeadersAction(Action):
 
 if __name__ == "__main__":
     parser = ArgumentParser()
+    log_level_group = parser.add_mutually_exclusive_group()
+    log_level_group.add_argument(
+        "--log-level",
+        help=f"Minimum log level emitted to the console. Valid values: {sorted(LOG_LEVELS)}",
+        type=parse_log_level,
+        default=LOG_LEVELS["INFO"],
+        metavar="LEVEL",
+    )
+    log_level_group.add_argument(
+        "--verbose",
+        help="Enable DEBUG logging on the console.",
+        action="store_const",
+        const=LOG_LEVELS["DEBUG"],
+        dest="log_level",
+    )
     parser.add_argument(
         "--skip-vela",
         help="Do not run Vela optimizer on downloaded models.",
@@ -154,6 +173,7 @@ if __name__ == "__main__":
         help=f"Specify the ML frameworks to set up resources for. "
              f"Valid values: {valid_ml_frameworks}",
         nargs="+",
+        choices=sorted(valid_ml_frameworks),
         default=[MLFramework.TENSORFLOW_LITE_MICRO.value],
         action="store",
     )
@@ -226,8 +246,14 @@ if __name__ == "__main__":
     if not Path(parsed_args.requirements_file).is_file():
         raise ArgumentTypeError(f"Invalid requirements file: {parsed_args.requirements_file}")
 
-    logging.basicConfig(filename="log_build_default.log", level=logging.DEBUG)
-    logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
+    configure_logging(
+        Path("log_build_default.log"),
+        LoggingOptions(
+            console_level=parsed_args.log_level,
+            file_mode="a",
+            show_thread=parsed_args.parallel > 1,
+        ),
+    )
 
     ml_frameworks = (
         valid_ml_frameworks

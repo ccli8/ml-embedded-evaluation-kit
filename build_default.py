@@ -38,6 +38,7 @@ from scripts.py.mlek_tools.config.npu import (
 from scripts.py.mlek_tools.config.optimizer import OptimizerConfig
 from scripts.py.mlek_tools.config.paths import PathsConfig
 from scripts.py.mlek_tools.config.tflite import TfliteConfig
+from scripts.py.mlek_tools.setup.logging_config import LoggingOptions, configure_logging
 from set_up_default_resources import EXECUTORCH_EXCLUDED_NPU_PROCESSOR_IDS
 from set_up_default_resources import INSTALL_VELA_FROM_SOURCE
 from set_up_default_resources import MLFramework, valid_ml_frameworks
@@ -364,10 +365,13 @@ if __name__ == "__main__":
     )
     parsed_args = parser.parse_args()
 
-    logging.basicConfig(
-        filename="log_build_default.log", level=logging.DEBUG, filemode="w"
+    configure_logging(
+        Path("log_build_default.log"),
+        LoggingOptions(
+            file_mode="w",
+            show_thread=parsed_args.make_jobs > 1,
+        ),
     )
-    logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
 
     build = BuildConfig(
         toolchain=parsed_args.toolchain.lower(),

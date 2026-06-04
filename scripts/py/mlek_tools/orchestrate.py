@@ -84,7 +84,10 @@ def _run_optimize_phase(
     )
 
     if parallel > 1:
-        with concurrent.futures.ThreadPoolExecutor(max_workers=parallel) as executor:
+        with concurrent.futures.ThreadPoolExecutor(
+                max_workers=parallel,
+                thread_name_prefix="optimise",
+        ) as executor:
             futures: typing.List[concurrent.futures.Future] = []
 
             if optimize_tflite:
