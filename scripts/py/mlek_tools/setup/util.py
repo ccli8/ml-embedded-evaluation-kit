@@ -26,7 +26,7 @@ import typing
 import urllib
 import urllib.parse
 import urllib.request
-from netrc import netrc
+from netrc import NetrcParseError, netrc
 from pathlib import Path
 from urllib.error import URLError
 
@@ -61,10 +61,21 @@ def build_opener(domain: str) -> urllib.request.OpenerDirector:
     """
     handlers = []
     if default_netrc_path.is_file():
-        netrc_entry = netrc().authenticators(domain)
-        if netrc_entry:
-            login, _, password = netrc_entry
-            handlers.append(create_basic_auth_handler(domain, login, password))
+        try:
+            # Use the default path lookup so Python keeps applying ~/.netrc
+            # permission checks before credentials are read.
+            netrc_entry = netrc().authenticators(domain)
+            if netrc_entry:
+                login, _, password = netrc_entry
+                handlers.append(create_basic_auth_handler(domain, login, password))
+        except NetrcParseError as err:
+            # Treat an unusable ~/.netrc as no credentials, so public
+            # downloads are not blocked by an unrelated local config issue.
+            logging.warning(
+                "Ignoring unusable netrc file %s at line %s.",
+                default_netrc_path,
+                err.lineno,
+            )
     return urllib.request.build_opener(*handlers)
 
 
