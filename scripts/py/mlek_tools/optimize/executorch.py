@@ -41,7 +41,7 @@ _MLEK_LOWERING_SCRIPT = (
     / "lowering"
     / "executorch_arm_backend_lowering.py"
 )
-_TOSA_LOWERING_MODULE = "-m examples.arm.aot_arm_compiler"
+_TOSA_LOWERING_MODULE = "-m backends.arm.scripts.aot_arm_compiler"
 
 
 @dataclasses.dataclass(frozen=True)

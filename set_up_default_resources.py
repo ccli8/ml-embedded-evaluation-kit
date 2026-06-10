@@ -55,7 +55,7 @@ valid_ml_frameworks: typing.Set[str] = {f.value for f in MLFramework}
 
 # ── Project-specific constants ────────────────────────────────────────────────
 
-VELA_VERSION = "5.0.0"
+VELA_VERSION = "5.1.0"
 INSTALL_VELA_FROM_SOURCE = False
 VELA_URL = "https://git.gitlab.arm.com/artificial-intelligence/ethos-u/ethos-u-vela.git"
 MIN_PYTHON_VERSION = (3, 10)
@@ -78,6 +78,7 @@ default_executorch_requirements_path = (
 )
 default_downloads_path = _current_file_dir / "resources_downloaded"
 default_executorch_path = _current_file_dir / "dependencies" / "executorch"
+default_cmsis_nn_path = _current_file_dir / "dependencies" / "cmsis-nn"
 default_vela_config_file = _current_file_dir / "scripts" / "vela" / "default_vela.ini"
 
 # ── Helpers that depend on project-specific defaults ──────────────────────────
@@ -299,6 +300,7 @@ if __name__ == "__main__":
         enabled=use_et,
         run_lowering=not parsed_args.skip_vela,
         executorch_path=default_executorch_path,
+        cmsis_nn_path=default_cmsis_nn_path,
         excluded_npu_processor_ids=EXECUTORCH_EXCLUDED_NPU_PROCESSOR_IDS,
     )
 

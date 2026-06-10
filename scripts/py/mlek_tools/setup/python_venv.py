@@ -89,7 +89,7 @@ class PythonEnv:
 
     def pip_install_if_needed(
             self,
-            package_spec: str,
+            package_spec: typing.Union[str, Path],
             installed_name: typing.Optional[str] = None,
             no_deps: bool = False,
             environment: typing.Optional[typing.Dict] = None,

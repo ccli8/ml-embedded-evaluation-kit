@@ -84,7 +84,7 @@ computed the MFCC from this spectrogram, but for *Conformer* the Mel Spectrogram
 
 Our implementation of the Mel Spectrogram computation is intended to be as close as possible
 to that found in the
-[torchaudio](https://docs.pytorch.org/audio/2.9.0/generated/torchaudio.transforms.MelSpectrogram.html) project,
+[torchaudio](https://docs.pytorch.org/audio/2.11.0/generated/torchaudio.transforms.MelSpectrogram.html) project,
 as this was used for training the model.
 
 Unlike *wav2letter* where we run inference for a sliding window over the input audio data,

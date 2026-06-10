@@ -30,4 +30,5 @@ class ExecuTorchConfig:
     enabled: bool = True
     run_lowering: bool = False
     executorch_path: typing.Optional[Path] = None
+    cmsis_nn_path: typing.Optional[Path] = None
     excluded_npu_processor_ids: typing.Tuple[str, ...] = field(default_factory=tuple)

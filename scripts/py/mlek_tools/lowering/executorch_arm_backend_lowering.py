@@ -18,7 +18,7 @@
 
 Run this script with the ExecuTorch root as the working directory so that the
 ``examples`` package is importable.  It replaces direct use of
-``examples.arm.aot_arm_compiler`` for Arm backend targets, giving MLEK full
+``backends.arm.scripts.aot_arm_compiler`` for Arm backend targets, giving MLEK full
 control over the ``EthosUCompileSpec`` construction — in particular the
 ``extra_flags`` list (``--cop-format``, ``--arena-cache-size``) and
 ``config_ini``.
@@ -213,11 +213,11 @@ def main() -> None:
 
     # ExecuTorch helper imports — available once the ExecuTorch venv is active
     # and this script is run with cwd=<executorch_root>.
-    from examples.arm.aot_arm_compiler import (  # pylint: disable=import-error,import-outside-toplevel
+    from backends.arm.scripts.aot_arm_compiler import (  # pylint: disable=import-error,import-outside-toplevel
         dump_delegation_info,
         get_model_and_inputs_from_name,
         quantize_model,
-        transform_for_cortex_m_backend,
+        QuantMode
     )
     from executorch.exir import (  # pylint: disable=import-error,import-outside-toplevel
         EdgeCompileConfig,
@@ -226,6 +226,7 @@ def main() -> None:
     )
     from executorch.backends.arm.util._factory import create_partitioner  # pylint: disable=import-error,import-outside-toplevel
     from executorch.extension.export_util.utils import save_pte_program  # pylint: disable=import-error,import-outside-toplevel
+    from executorch.backends.cortex_m.passes.replace_quant_nodes_pass import ReplaceQuantNodesPass # pylint: disable=import-error,import-outside-toplevel
     import torch  # pylint: disable=import-error,import-outside-toplevel
 
     original_model, example_inputs = get_model_and_inputs_from_name(
@@ -242,8 +243,16 @@ def main() -> None:
 
     if args.delegate:
         if args.quantize:
+            # pylint: disable=fixme
+            # TODO: Supply calibration_samples argument
             _model_quant, exported_program = quantize_model(
-                args, model, example_inputs, compile_spec
+                model,
+                example_inputs,
+                compile_spec,
+                args.model_name,
+                args.strict_export,
+                QuantMode.INT8,
+                calibration_samples=None
             )
         partitioner = create_partitioner(compile_spec)
         edge = to_edge_transform_and_lower(
@@ -257,7 +266,9 @@ def main() -> None:
             compile_config=EdgeCompileConfig(_check_ir_validity=False),
         )
 
-    edge = transform_for_cortex_m_backend(edge, args)
+    # pylint: disable=fixme
+    # TODO: Exclude this when targeting direct drive
+    edge = edge.transform([ReplaceQuantNodesPass()])
     dump_delegation_info(edge, args.intermediates)
 
     exec_prog = edge.to_executorch(

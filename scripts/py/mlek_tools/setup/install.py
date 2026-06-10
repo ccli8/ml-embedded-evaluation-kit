@@ -70,6 +70,10 @@ def setup_executorch(python_env: PythonEnv, executorch_config: ExecuTorchConfig)
     """Install ExecuTorch into *python_env* if not already present."""
     if not python_env.is_installed("executorch"):
         install_executorch(python_env, executorch_config)
+    python_env.pip_install_if_needed(
+        executorch_config.cmsis_nn_path,
+        "cmsis-nn"
+    )
 
 
 def install_executorch_project(

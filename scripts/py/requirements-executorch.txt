@@ -3,9 +3,9 @@
 
 # ExecuTorch and its PyTorch dependencies.
 # Only installed when --ml-frameworks executorch is requested.
-executorch==1.1.0
-torch==2.10.0
-torchao==0.15.0
-torchaudio==2.10.0
-torchvision==0.25.0
-tosa-tools==2026.2.0
+executorch==1.3.1
+torch==2.12.0
+torchao==0.17.0
+torchaudio==2.11.0
+torchvision==0.27.0
+tosa-tools==2026.2.1
