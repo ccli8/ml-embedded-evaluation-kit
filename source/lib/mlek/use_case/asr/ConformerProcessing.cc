@@ -56,7 +56,13 @@ namespace arm::app
             input,
             inputSize,
             static_cast<float*>(this->m_inputTensorMelSpec->GetData()),
+            //TESTTEST
+            //BUGFIX: Memory corrupted when .wav file is above 4s
+            #if 0
             this->m_inputTensorMelSpec->Bytes()
+            #else
+            this->m_inputTensorMelSpec->GetNumElements()
+            #endif
         );
         auto paddingNeeded = this->m_inputTensorMelSpec->GetNumElements() - elementsWritten;
         std::fill_n(
@@ -180,6 +186,9 @@ namespace arm::app
             [](std::size_t acc, const std::string& s) {
                 return acc + s.size();
         });
+
+        //TESTTEST
+        info("Decoded tokens: %d\n", decoded.size());
 
         decodedResult = "";
         decodedResult.reserve(resultSize);

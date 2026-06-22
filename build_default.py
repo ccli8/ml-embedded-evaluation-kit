@@ -265,7 +265,10 @@ def run(build_config: BuildConfig):
             toolchain_file_name
     )
     ethos_u_cfg = get_default_npu_config_from_name(build_config.npu_config_name)
-    cmake_path = env_path / "bin" / "cmake"
+    if sys.platform == "win32":
+        cmake_path = env_path / "Scripts" / "cmake"
+    else:
+        cmake_path = env_path / "bin" / "cmake"
     framework_arg = ''
     if build_config.ml_framework == MLFramework.TENSORFLOW_LITE_MICRO:
         # TensorFlow Lite Micro is already the default option. Just ensure

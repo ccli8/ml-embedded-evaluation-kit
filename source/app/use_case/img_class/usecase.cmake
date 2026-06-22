@@ -50,10 +50,10 @@ elseif(${ML_FRAMEWORK} STREQUAL "ExecuTorch")
 
     if (ETHOS_U_NPU_ENABLED)
         string(TOLOWER ${ETHOSU_TARGET_NPU_CONFIG} _NPU_CFG_ID)
-        set(DEFAULT_MODEL_PATH          ${DEFAULT_MODEL_DIR}/mv2_arm_delegate_${_NPU_CFG_ID}.pte)
+        set(DEFAULT_MODEL_PATH          ${DEFAULT_MODEL_DIR}/deit_tiny_arm_delegate_${_NPU_CFG_ID}.pte)
         set(DEFAULT_ACTIVATION_BUF_SZ   0x00200000)
     else()
-        set(DEFAULT_MODEL_PATH          ${DEFAULT_MODEL_DIR}/mv2_arm_TOSA-1.0+FP.pte)
+        set(DEFAULT_MODEL_PATH          ${DEFAULT_MODEL_DIR}/deit_tiny_arm_TOSA-1.0+FP.pte)
         set(DEFAULT_ACTIVATION_BUF_SZ   0x00C00000)
     endif()
 
