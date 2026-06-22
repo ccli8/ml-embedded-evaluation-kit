@@ -84,6 +84,10 @@ _u85_macs_to_system_configs = {
     2048: "Ethos_U85_SYS_DRAM_High_2048",
 }
 
+# NOTE: Uniform u85 system config for evaluation
+# Ethos_U85_SYS_DRAM_High_Custom
+# Ethos_U85_SYS_DRAM_Low_Custom
+
 #: All supported Ethos-U NPU configurations.
 valid_npu_configs = NpuConfigs.create(
     *(
