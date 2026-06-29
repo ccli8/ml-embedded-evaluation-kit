@@ -299,11 +299,12 @@ def run(
     )
 
     # CMake build
+    build_command = f"{cmake_path} --build {build_dir} -j{build_config.make_jobs}"
+    if build_config.make_verbose:
+        build_command += " --verbose"
+
     run_command(
-        command=(
-            f"{cmake_path} --build {build_dir} -j{build_config.make_jobs}"
-            " --verbose" if build_config.make_verbose else ""
-        ),
+        command=build_command,
         logpipe=logpipe,
         fail_message="Failed to build project."
     )
